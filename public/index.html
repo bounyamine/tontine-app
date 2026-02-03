@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tontine - Gestion Production</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --fb-blue: #1877F2;
+            --fb-blue-hover: #166FE5;
+            --fb-green: #42B72A;
+            --fb-bg: #F0F2F5;
+            --fb-card: #FFFFFF;
+            --fb-border: #CED0D4;
+            --fb-text: #050505;
+            --fb-text-secondary: #65676B;
+            --fb-danger: #E4E6EB;
+            --fb-hover: #F2F3F5;
+            --success: #42B72A;
+            --warning: #FFA726;
+            --danger: #F02849;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--fb-bg);
+            color: var(--fb-text);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--fb-card);
+            padding: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--fb-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--fb-blue);
+        }
+
+        .header-info {
+            text-align: right;
+            color: var(--fb-text-secondary);
+            font-size: 14px;
+        }
+
+        .nav-container {
+            background: var(--fb-card);
+            border-bottom: 1px solid var(--fb-border);
+        }
+
+        .nav-tabs {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4px;
+            padding: 0 16px;
+        }
+
+        .nav-tab {
+            padding: 16px 12px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--fb-text-secondary);
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 3px solid transparent;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-tab:hover {
+            background: var(--fb-hover);
+        }
+
+        .nav-tab.active {
+            color: var(--fb-blue);
+            border-bottom-color: var(--fb-blue);
+        }
+
+        .main-content {
+            padding: 16px;
+        }
+
+        .card {
+            background: var(--fb-card);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 16px 12px 16px;
+            border-bottom: 1px solid var(--fb-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--fb-text);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--fb-text-secondary);
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--fb-card);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--fb-border);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--fb-blue);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--fb-text-secondary);
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Segoe UI', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--fb-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--fb-blue-hover);
+        }
+
+        .btn-success {
+            background: var(--fb-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #36A420;
+        }
+
+        .btn-secondary {
+            background: var(--fb-danger);
+            color: var(--fb-text);
+        }
+
+        .btn-secondary:hover {
+            background: #D8DADF;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--fb-border);
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--fb-text-secondary);
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 15px;
+        }
+
+        tbody tr:hover {
+            background: var(--fb-hover);
+        }
+
+        .progress-container {
+            margin: 16px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--fb-danger);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--fb-blue);
+            transition: width 0.5s ease;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: #E7F3FF;
+            color: var(--fb-blue);
+        }
+
+        .badge-success {
+            background: #E6F4EA;
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: #FFF3E0;
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: #FFEBEE;
+            color: var(--danger);
+        }
+
+        .member-payment-section {
+            background: var(--fb-hover);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .member-payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .member-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .member-total {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--fb-blue);
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+        }
+
+        .payment-day {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid var(--fb-border);
+        }
+
+        .payment-day.paid {
+            background: #E6F4EA;
+            border-color: var(--success);
+        }
+
+        .day-label {
+            font-size: 12px;
+            color: var(--fb-text-secondary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .day-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid var(--fb-border);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .day-input:focus {
+            outline: none;
+            border-color: var(--fb-blue);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 0;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 16px 16px 12px 16px;
+            border-bottom: 1px solid var(--fb-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--fb-danger);
+            border: none;
+            color: var(--fb-text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            background: #D8DADF;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--fb-border);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--fb-border);
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--fb-blue);
+        }
+
+        .cycle-banner {
+            background: linear-gradient(135deg, var(--fb-blue) 0%, #0C63D4 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .cycle-banner-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .cycle-banner-info {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .beneficiary-card {
+            background: linear-gradient(135deg, #F0F2F5 0%, #E4E6EB 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .beneficiary-label {
+            font-size: 14px;
+            color: var(--fb-text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .beneficiary-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--fb-blue);
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-info {
+            background: #E7F3FF;
+            color: #0C63D4;
+            border: 1px solid #B3D7FF;
+        }
+
+        .alert-success {
+            background: #E6F4EA;
+            color: #1E8E3E;
+            border: 1px solid #A8DAB5;
+        }
+
+        .alert-warning {
+            background: #FFF3E0;
+            color: #E65100;
+            border: 1px solid #FFE0B2;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--fb-text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid var(--fb-border);
+            border-top: 3px solid var(--fb-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .payment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const API_BASE = '';
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('home');
+            const [members, setMembers] = useState([]);
+            const [cycles, setCycles] = useState([]);
+            const [payments, setPayments] = useState({});
+            const [config, setConfig] = useState(null);
+            const [stats, setStats] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [showModal, setShowModal] = useState(false);
+            const [modalType, setModalType] = useState('');
+            const [newMember, setNewMember] = useState({ name: '', phone: '' });
+
+            useEffect(() => {
+                loadData();
+            }, []);
+
+            const loadData = async () => {
+                try {
+                    setLoading(true);
+                    const [membersRes, cyclesRes, paymentsRes, configRes, statsRes] = await Promise.all([
+                        fetch(`${API_BASE}/api/members`),
+                        fetch(`${API_BASE}/api/cycles`),
+                        fetch(`${API_BASE}/api/payments`),
+                        fetch(`${API_BASE}/api/config`),
+                        fetch(`${API_BASE}/api/stats`)
+                    ]);
+
+                    const membersData = await membersRes.json();
+                    const cyclesData = await cyclesRes.json();
+                    const paymentsData = await paymentsRes.json();
+                    const configData = await configRes.json();
+                    const statsData = await statsRes.json();
+
+                    setMembers(membersData);
+                    setCycles(cyclesData.length > 0 ? cyclesData : await initializeCycles());
+                    setPayments(paymentsData);
+                    setConfig(configData);
+                    setStats(statsData);
+                } catch (error) {
+                    console.error('Erreur de chargement:', error);
+                    alert('Erreur lors du chargement des données');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const initializeCycles = async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/cycles/initialize`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    return await res.json();
+                } catch (error) {
+                    console.error('Erreur initialisation cycles:', error);
+                    return [];
+                }
+            };
+
+            const addMember = async () => {
+                if (!newMember.name.trim()) return;
+
+                try {
+                    const res = await fetch(`${API_BASE}/api/members`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newMember)
+                    });
+                    const member = await res.json();
+                    setMembers([...members, member]);
+                    setNewMember({ name: '', phone: '' });
+                    setShowModal(false);
+                    await loadData();
+                } catch (error) {
+                    console.error('Erreur ajout membre:', error);
+                    alert('Erreur lors de l\'ajout du membre');
+                }
+            };
+
+            const updatePayment = async (memberId, day, amount) => {
+                try {
+                    await fetch(`${API_BASE}/api/payments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            cycleId: config.currentCycle,
+                            memberId,
+                            day,
+                            amount: amount || 0
+                        })
+                    });
+                    const key = `${config.currentCycle}-${memberId}-${day}`;
+                    setPayments({
+                        ...payments,
+                        [key]: { amount: parseInt(amount) || 0 }
+                    });
+                    await loadData();
+                } catch (error) {
+                    console.error('Erreur paiement:', error);
+                }
+            };
+
+            const drawBeneficiaries = async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/draw-beneficiaries`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await res.json();
+                    setCycles(data.cycles);
+                    setShowModal(false);
+                    await loadData();
+                    alert('Ordre des bénéficiaires tiré au sort avec succès!');
+                } catch (error) {
+                    console.error('Erreur tirage:', error);
+                    alert('Erreur lors du tirage au sort');
+                }
+            };
+
+            const completeCycle = async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/cycles/${config.currentCycle}/complete`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    if (!res.ok) {
+                        const error = await res.json();
+                        alert(error.error || 'Erreur lors de la complétion du cycle');
+                        return;
+                    }
+
+                    const data = await res.json();
+                    setShowModal(false);
+                    await loadData();
+                    alert(`Cycle terminé! Montant collecté: ${data.totalCollected.toLocaleString()} FCFA`);
+                } catch (error) {
+                    console.error('Erreur complétion:', error);
+                    alert('Erreur lors de la complétion du cycle');
+                }
+            };
+
+            const getMemberPayments = (memberId, cycleId = null) => {
+                const cycle = cycleId || config?.currentCycle || 1;
+                let total = 0;
+                for (let day = 1; day <= 10; day++) {
+                    const key = `${cycle}-${memberId}-${day}`;
+                    if (payments[key]) {
+                        total += payments[key].amount || 0;
+                    }
+                }
+                return total;
+            };
+
+            const openModal = (type) => {
+                setModalType(type);
+                setShowModal(true);
+            };
+
+            if (loading) {
+                return (
+                    <div className="loading">
+                        <div className="spinner"></div>
+                        <div>Chargement des données...</div>
+                    </div>
+                );
+            }
+
+            const currentCycle = cycles.find(c => c.id === config?.currentCycle);
+            const beneficiary = members.find(m => m.id === currentCycle?.beneficiaryId);
+            const allPaid = members.every(m => getMemberPayments(m.id) >= config?.cycleAmount);
+
+            const renderHome = () => (
+                <div>
+                    <div className="cycle-banner">
+                        <div className="cycle-banner-title">Cycle {config?.currentCycle} sur 10</div>
+                        <div className="cycle-banner-info">
+                            {currentCycle?.startDate} - {currentCycle?.endDate}
+                        </div>
+                        {currentCycle?.status === 'En cours' && (
+                            <div className="action-buttons">
+                                {!currentCycle.beneficiaryId && (
+                                    <button className="btn btn-success" onClick={() => openModal('draw')}>
+                                        🎲 Tirer au Sort
+                                    </button>
+                                )}
+                                {allPaid && currentCycle.beneficiaryId && (
+                                    <button className="btn btn-success" onClick={() => openModal('complete')}>
+                                        ✅ Terminer ce Cycle
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {!currentCycle?.beneficiaryId && config?.beneficiaryOrder.length === 0 && (
+                        <div className="alert alert-warning">
+                            ⚠️ L'ordre des bénéficiaires n'a pas encore été défini.
+                        </div>
+                    )}
+
+                    {beneficiary && (
+                        <div className="beneficiary-card">
+                            <div className="beneficiary-label">Bénéficiaire du cycle actuel</div>
+                            <div className="beneficiary-name">🎯 {beneficiary.name}</div>
+                        </div>
+                    )}
+
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <div className="stat-value">{stats?.totalCollected?.toLocaleString() || 0}</div>
+                            <div className="stat-label">FCFA Collectés</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{stats?.targetAmount?.toLocaleString() || 0}</div>
+                            <div className="stat-label">FCFA Objectif</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{members.length}</div>
+                            <div className="stat-label">Membres</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{stats?.progress?.toFixed(0) || 0}%</div>
+                            <div className="stat-label">Progression</div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-header">
+                            <div>
+                                <div className="card-title">Progression du Cycle</div>
+                                <div className="card-subtitle">Objectif: {stats?.targetAmount?.toLocaleString()} FCFA</div>
+                            </div>
+                        </div>
+                        <div className="card-body">
+                            <div className="progress-container">
+                                <div className="progress-info">
+                                    <span>{stats?.totalCollected?.toLocaleString() || 0} FCFA</span>
+                                    <span>{stats?.progress?.toFixed(1) || 0}%</span>
+                                </div>
+                                <div className="progress-bar">
+                                    <div className="progress-fill" style={{width: `${Math.min(stats?.progress || 0, 100)}%`}}></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-header">
+                            <div className="card-title">État des Paiements</div>
+                        </div>
+                        <div className="card-body">
+                            <div className="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Membre</th>
+                                            <th>Payé</th>
+                                            <th>Reste</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {members.map(member => {
+                                            const paid = getMemberPayments(member.id);
+                                            const target = config?.cycleAmount || 2000;
+                                            const remaining = target - paid;
+                                            const isComplete = paid >= target;
+                                            
+                                            return (
+                                                <tr key={member.id}>
+                                                    <td><strong>{member.name}</strong></td>
+                                                    <td>{paid.toLocaleString()} FCFA</td>
+                                                    <td>{Math.max(0, remaining).toLocaleString()} FCFA</td>
+                                                    <td>
+                                                        <span className={`badge ${isComplete ? 'badge-success' : 'badge-warning'}`}>
+                                                            {isComplete ? '✓ Complet' : '⏳ En cours'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderPayments = () => (
+                <div className="card">
+                    <div className="card-header">
+                        <div>
+                            <div className="card-title">Paiements Quotidiens</div>
+                            <div className="card-subtitle">Cycle {config?.currentCycle}</div>
+                        </div>
+                    </div>
+                    <div className="card-body">
+                        {members.map(member => {
+                            const memberTotal = getMemberPayments(member.id);
+                            
+                            return (
+                                <div key={member.id} className="member-payment-section">
+                                    <div className="member-payment-header">
+                                        <div className="member-name">{member.name}</div>
+                                        <div className="member-total">
+                                            {memberTotal.toLocaleString()} / {config?.cycleAmount?.toLocaleString()} FCFA
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="payment-grid">
+                                        {Array.from({length: 10}, (_, i) => {
+                                            const day = i + 1;
+                                            const key = `${config?.currentCycle}-${member.id}-${day}`;
+                                            const amount = payments[key]?.amount || '';
+                                            const isPaid = amount >= 200;
+                                            
+                                            return (
+                                                <div key={day} className={`payment-day ${isPaid ? 'paid' : ''}`}>
+                                                    <div className="day-label">J{day}</div>
+                                                    <input
+                                                        type="number"
+                                                        className="day-input"
+                                                        value={amount}
+                                                        onChange={(e) => updatePayment(member.id, day, e.target.value)}
+                                                        placeholder="0"
+                                                        min="0"
+                                                        max="200"
+                                                    />
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })}
+
+                        <div style={{marginTop: '24px', padding: '20px', background: 'var(--fb-blue)', color: 'white', borderRadius: '8px', textAlign: 'center'}}>
+                            <div style={{fontSize: '14px', marginBottom: '8px'}}>Total Collecté</div>
+                            <div style={{fontSize: '36px', fontWeight: '700'}}>
+                                {stats?.totalCollected?.toLocaleString() || 0} FCFA
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderMembers = () => (
+                <div className="card">
+                    <div className="card-header">
+                        <div className="card-title">Membres de la Tontine</div>
+                        <button className="btn btn-primary" onClick={() => openModal('addMember')}>
+                            + Ajouter
+                        </button>
+                    </div>
+                    <div className="card-body">
+                        <div className="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Nom</th>
+                                        <th>Téléphone</th>
+                                        <th>Position</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {members.map((member, index) => {
+                                        const position = config?.beneficiaryOrder.indexOf(member.id);
+                                        return (
+                                            <tr key={member.id}>
+                                                <td>{member.id}</td>
+                                                <td><strong>{member.name}</strong></td>
+                                                <td>{member.phone || '—'}</td>
+                                                <td>{position !== -1 ? `Cycle ${position + 1}` : 'Non défini'}</td>
+                                                <td>
+                                                    <span className="badge badge-success">{member.status}</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderCycles = () => (
+                <div className="card">
+                    <div className="card-header">
+                        <div className="card-title">Calendrier des Cycles</div>
+                    </div>
+                    <div className="card-body">
+                        <div className="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cycle</th>
+                                        <th>Période</th>
+                                        <th>Bénéficiaire</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {cycles.map(cycle => {
+                                        const beneficiaryMember = members.find(m => m.id === cycle.beneficiaryId);
+                                        
+                                        return (
+                                            <tr key={cycle.id}>
+                                                <td><strong>#{cycle.id}</strong></td>
+                                                <td>{cycle.startDate} - {cycle.endDate}</td>
+                                                <td>{beneficiaryMember?.name || 'Non défini'}</td>
+                                                <td>{cycle.amount?.toLocaleString()} FCFA</td>
+                                                <td>
+                                                    <span className={`badge ${
+                                                        cycle.status === 'Terminé' ? 'badge-success' :
+                                                        cycle.status === 'En cours' ? 'badge-primary' :
+                                                        'badge-warning'
+                                                    }`}>
+                                                        {cycle.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderModal = () => {
+                if (modalType === 'addMember') {
+                    return (
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <div className="modal-title">Ajouter un Membre</div>
+                                <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Nom Complet</label>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        value={newMember.name}
+                                        onChange={(e) => setNewMember({...newMember, name: e.target.value})}
+                                        placeholder="Entrez le nom"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Téléphone</label>
+                                    <input
+                                        type="tel"
+                                        className="form-input"
+                                        value={newMember.phone}
+                                        onChange={(e) => setNewMember({...newMember, phone: e.target.value})}
+                                        placeholder="Entrez le numéro"
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Annuler</button>
+                                <button className="btn btn-primary" onClick={addMember}>Ajouter</button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (modalType === 'draw') {
+                    return (
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <div className="modal-title">Tirage au Sort</div>
+                                <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="alert alert-info">
+                                    ℹ️ Le système va tirer au sort l'ordre des bénéficiaires pour les 10 cycles.
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Annuler</button>
+                                <button className="btn btn-primary" onClick={drawBeneficiaries}>🎲 Lancer</button>
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (modalType === 'complete') {
+                    return (
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <div className="modal-title">Terminer le Cycle</div>
+                                <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="alert alert-success">
+                                    ✅ Montant: {stats?.totalCollected?.toLocaleString()} FCFA
+                                </div>
+                                <p>Bénéficiaire: <strong>{beneficiary?.name}</strong></p>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Annuler</button>
+                                <button className="btn btn-success" onClick={completeCycle}>✅ Valider</button>
+                            </div>
+                        </div>
+                    );
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    <div className="header">
+                        <div className="header-content">
+                            <div className="logo">
+                                <div className="logo-icon">💰</div>
+                                <div className="logo-text">Tontine</div>
+                            </div>
+                            <div className="header-info">
+                                <div>Cycle {config?.currentCycle}/10</div>
+                                <div style={{fontSize: '12px'}}>{config?.cycleAmount?.toLocaleString()} FCFA/cycle</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="nav-container">
+                        <div className="nav-tabs">
+                            <button className={`nav-tab ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
+                                🏠 Accueil
+                            </button>
+                            <button className={`nav-tab ${activeTab === 'payments' ? 'active' : ''}`} onClick={() => setActiveTab('payments')}>
+                                💵 Paiements
+                            </button>
+                            <button className={`nav-tab ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>
+                                👥 Membres
+                            </button>
+                            <button className={`nav-tab ${activeTab === 'cycles' ? 'active' : ''}`} onClick={() => setActiveTab('cycles')}>
+                                📅 Cycles
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="main-content">
+                        {activeTab === 'home' && renderHome()}
+                        {activeTab === 'payments' && renderPayments()}
+                        {activeTab === 'members' && renderMembers()}
+                        {activeTab === 'cycles' && renderCycles()}
+                    </div>
+
+                    {showModal && (
+                        <div className="modal" onClick={() => setShowModal(false)}>
+                            <div onClick={(e) => e.stopPropagation()}>
+                                {renderModal()}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
